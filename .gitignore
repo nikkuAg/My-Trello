@@ -1,2 +1,4 @@
 trello/__pycache__
 assignment/__pycache__
+
+assignment/db_details.py
