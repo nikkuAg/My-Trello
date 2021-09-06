@@ -1,15 +1,15 @@
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from rest_framework import viewsets
-from .models import AppUser, Project, List, Card, Maintainer
-from .serializers import AppUserSerializer, ProjectSerializer, ListSerializer, CardSerializer, MaintainerSerializer
+from .models import AppUser, Project, List, Card
+from .serializers import UserSerializer, ProjectSerializer, ListSerializer, CardSerializer
 import requests
 # Create your views here.
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = AppUser.objects.all()
-    serializer_class = AppUserSerializer
+    serializer_class = UserSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -25,11 +25,6 @@ class ListViewSet(viewsets.ModelViewSet):
 class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
-
-
-class MaintainerViewSet(viewsets.ModelViewSet):
-    queryset = Maintainer.objects.all()
-    serializer_class = MaintainerSerializer
 
 
 def login(request):
@@ -65,7 +60,8 @@ def login(request):
             roleIterateor = x
             if roleIterateor["role"] == "Maintainer":
                 role = "Admin"
-                AppUser.objects.create(username=username, name=name, role=role)
+                AppUser.objects.create(
+                    username=username, name=name, admin=True)
                 return HttpResponse("User added and Login")
         if role == "":
             return HttpResponse("You are not eligible for this app")

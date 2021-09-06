@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
+from django.contrib.auth.models import AbstractUser
+from ckeditor.fields import RichTextField
 
 # Create your models here.
 
@@ -10,36 +12,29 @@ from django.db.models.deletion import CASCADE
 """
 
 
-class AppUser(models.Model):
-    username = models.IntegerField()
+class AppUser(AbstractUser):
+    username = models.IntegerField(unique=True)
     name = models.CharField(max_length=255)
-    role = models.CharField(max_length=10)
+    admin = models.BooleanField(default=False)
     disabled = models.BooleanField(default=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.username)
 
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
-    wiki = models.CharField(max_length=500)
-    team_members = models.ForeignKey(to=AppUser, on_delete=CASCADE)
+    wiki = RichTextField()
+    date_started = models.DateField(auto_now_add=True)
+    team_members = models.ManyToManyField(AppUser, related_name='team_member')
+    maintainer = models.ManyToManyField(AppUser, related_name='maintainer')
 
     def __str__(self) -> str:
         return self.name
 
 
-class Maintainer(models.Model):
-    user = models.ForeignKey(to=AppUser, on_delete=CASCADE)
-    project = models.ForeignKey(to=Project, on_delete=CASCADE)
-
-    def __str__(self) -> str:
-        return self.project.name
-
-
 class List(models.Model):
     name = models.CharField(max_length=255)
-
     project = models.ForeignKey(to=Project, on_delete=CASCADE)
 
     def __str__(self) -> str:
@@ -50,8 +45,9 @@ class Card(models.Model):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=500)
     comment = models.CharField(max_length=500)
-    assignee = models.ForeignKey(to=AppUser, on_delete=CASCADE)
+    assignee = models.ManyToManyField(AppUser, related_name='Assignees')
     list = models.ForeignKey(to=List, on_delete=CASCADE)
+    due_date = models.DateField()
 
     def __str__(self) -> str:
         return self.title

@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import AppUser, Project, List, Card, Maintainer
+from .models import AppUser, Project, List, Card
 
 
-class AppUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = '__all__'
@@ -23,10 +23,4 @@ class ListSerializer(serializers.ModelSerializer):
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
-        fields = '__all__'
-
-
-class MaintainerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Maintainer
         fields = '__all__'

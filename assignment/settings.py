@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'trelloapp',
+    'ckeditor',
+    'trello',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,8 @@ DATABASES = {
     'default': {
         'NAME': 'trello',
         'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
         'USER': 'divyansh',
         'PASSWORD': 'divyansh',
     }
@@ -117,7 +120,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+AUTH_USER_MODEL = 'trello.AppUser'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
