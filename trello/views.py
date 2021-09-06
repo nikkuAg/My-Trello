@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from .models import AppUser, Project, List, Card
 from .serializers import UserSerializer, ProjectSerializer, ListSerializer, CardSerializer
 import requests
+from .data import urls, keys
 # Create your views here.
 
 
@@ -29,39 +30,37 @@ class CardViewSet(viewsets.ModelViewSet):
 
 def login(request):
     """
-        authorization url: https://channeli.in/oauth/authorise?client_id=jB4kkv0oEjEUbNTCQK4gHtZ3lykaAMlkACtM5yXr&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Ftrello%2Fafter%5Flogin%2F&state=Login%7Fsuccess%7Fusing%7Foauth
+        Login/SignUp using Channeli OAuth
     """
 
     code = request.GET.get('code')
-    url = 'https://channeli.in/open_auth/token/'
+    url = urls['auth']
     param = {
-        'client_id': 'jB4kkv0oEjEUbNTCQK4gHtZ3lykaAMlkACtM5yXr',
-        'client_secret': '5vig9qLMpr7C3G9kDNJGqARg3nHwtAyE3JnYUDtDNphfFx1mtPU0Qes1AOaoWSC4wgEDL4DlGFZTlriZ1LDytrs4yjvr033wBRAVyX9kxjUOc2jLOreUyPy9OODvWZwT',
+        'client_id': keys['client_id'],
+        'client_secret': keys['client_secret'],
         'grant_type': 'authorization_code',
-        'redirect_uri': 'http://localhost:8000/trello/after_login/',
+        'redirect_uri': urls['redirect1'],
         'code': code,
     }
     req = requests.post(url, data=param)
     data = req.json()
     token = data['access_token']
     type = data['token_type']
-    url = 'https://channeli.in/open_auth/get_user_data/'
+    url = urls['get_data']
     req = requests.get(url, headers={"Authorization": f"{type} {token}"})
     data = req.json()
     username = data["username"]
     name = data["person"]["fullName"]
-    role = ""
+    role = False
     try:
         user = AppUser.objects.get(username=username)
-        print('in try')
     except AppUser.DoesNotExist:
-        print('in except')
         for x in data["person"]["roles"]:
             roleIterateor = x
             if roleIterateor["role"] == "Maintainer":
-                role = "Admin"
+                role = True
                 AppUser.objects.create(
-                    username=username, name=name, admin=True)
+                    username=username, name=name, admin=role)
                 return HttpResponse("User added and Login")
         if role == "":
             return HttpResponse("You are not eligible for this app")
