@@ -4,7 +4,6 @@ from rest_framework import viewsets
 from .models import AppUser, Project, List, Card, Maintainer
 from .serializers import AppUserSerializer, ProjectSerializer, ListSerializer, CardSerializer, MaintainerSerializer
 import requests
-import json
 # Create your views here.
 
 
@@ -36,8 +35,8 @@ class MaintainerViewSet(viewsets.ModelViewSet):
 def login(request):
     """
         authorization url: https://channeli.in/oauth/authorise?client_id=jB4kkv0oEjEUbNTCQK4gHtZ3lykaAMlkACtM5yXr&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Ftrello%2Fafter%5Flogin%2F&state=Login%7Fsuccess%7Fusing%7Foauth
-
     """
+
     code = request.GET.get('code')
     url = 'https://channeli.in/open_auth/token/'
     param = {
@@ -54,9 +53,20 @@ def login(request):
     url = 'https://channeli.in/open_auth/get_user_data/'
     req = requests.get(url, headers={"Authorization": f"{type} {token}"})
     data = req.json()
-    return HttpResponse(data["username"] + " " + data['person']["fullName"])
-
-
-"""
-    {"userId":13296,"username":"20312012","person":{"fullName":"Divyansh Agarwal","roles":[{"role":"Student","activeStatus":"ActiveStatus.IS_ACTIVE"},{"role":"Maintainer","activeStatus":"ActiveStatus.IS_ACTIVE"}]},"student":{"enrolmentNumber":"20312012"}}
-"""
+    username = data["username"]
+    name = data["person"]["fullName"]
+    role = ""
+    try:
+        user = AppUser.objects.get(username=username)
+        print('in try')
+    except AppUser.DoesNotExist:
+        print('in except')
+        for x in data["person"]["roles"]:
+            roleIterateor = x
+            if roleIterateor["role"] == "Maintainer":
+                role = roleIterateor["role"]
+                AppUser.objects.create(username=username, name=name, role=role)
+                return HttpResponse("User added and Login")
+        if role == "":
+            return HttpResponse("You are not eligible for this app")
+    return HttpResponse("User Login")
