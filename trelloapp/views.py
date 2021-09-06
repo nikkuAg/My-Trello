@@ -64,7 +64,7 @@ def login(request):
         for x in data["person"]["roles"]:
             roleIterateor = x
             if roleIterateor["role"] == "Maintainer":
-                role = roleIterateor["role"]
+                role = "Admin"
                 AppUser.objects.create(username=username, name=name, role=role)
                 return HttpResponse("User added and Login")
         if role == "":
