@@ -5,12 +5,6 @@ from ckeditor.fields import RichTextField
 
 # Create your models here.
 
-"""
-    Client Id : jB4kkv0oEjEUbNTCQK4gHtZ3lykaAMlkACtM5yXr
-    Client secret: 5vig9qLMpr7C3G9kDNJGqARg3nHwtAyE3JnYUDtDNphfFx1mtPU0Qes1AOaoWSC4wgEDL4DlGFZTlriZ1LDytrs4yjvr033wBRAVyX9kxjUOc2jLOreUyPy9OODvWZwT
-
-"""
-
 
 class AppUser(AbstractUser):
     username = models.IntegerField(unique=True)

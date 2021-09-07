@@ -1,4 +1,5 @@
 from django.http.response import HttpResponse
+from django.contrib.auth import login
 from django.shortcuts import redirect, render
 from rest_framework import viewsets
 from .models import AppUser, Project, List, Card
@@ -28,7 +29,7 @@ class CardViewSet(viewsets.ModelViewSet):
     serializer_class = CardSerializer
 
 
-def login(request):
+def loginOauth(request):
     """
         Login/SignUp using Channeli OAuth
     """
@@ -53,15 +54,21 @@ def login(request):
     name = data["person"]["fullName"]
     role = False
     try:
-        user = AppUser.objects.get(username=username)
+        AppUser.objects.get(username=username)
     except AppUser.DoesNotExist:
         for x in data["person"]["roles"]:
             roleIterateor = x
             if roleIterateor["role"] == "Maintainer":
                 role = True
                 AppUser.objects.create(
-                    username=username, name=name, admin=role)
-                return HttpResponse("User added and Login")
+                    password=token, username=username, name=name, admin=role)
         if role == "":
             return HttpResponse("You are not eligible for this app")
-    return HttpResponse("User Login")
+    AppUser.objects.filter(username=username).update(password=token)
+    user = AppUser.objects.get(username=username)
+    if user is not None:
+        login(request, user)
+        return redirect("http://localhost:8000/trello/")
+    else:
+        user.delete()
+        return HttpResponse("Failed Login")

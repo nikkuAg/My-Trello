@@ -5,7 +5,7 @@ from .models import AppUser, Project, List, Card
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
-        fields = '__all__'
+        fields = ['username', 'name', 'admin', 'disabled']
 
 
 class ProjectSerializer(serializers.ModelSerializer):
