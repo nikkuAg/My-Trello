@@ -4,3 +4,5 @@ assignment/__pycache__
 assignment/db_details.py
 
 trello/data.py
+
+trello/permissions.py

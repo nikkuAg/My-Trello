@@ -21,7 +21,7 @@ class Project(models.Model):
     wiki = RichTextField()
     date_started = models.DateField(auto_now_add=True)
     team_members = models.ManyToManyField(AppUser, related_name='team_member')
-    maintainer = models.ManyToManyField(AppUser, related_name='maintainer')
+    creator = models.ManyToManyField(AppUser, related_name='maintainer')
 
     def __str__(self) -> str:
         return self.name

@@ -1,6 +1,6 @@
 from django.http.response import HttpResponse
 from django.contrib.auth import login
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from rest_framework import viewsets
 from .models import AppUser, Project, List, Card
 from .serializers import UserSerializer, ProjectSerializer, ListSerializer, CardSerializer
@@ -27,6 +27,14 @@ class ListViewSet(viewsets.ModelViewSet):
 class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
+
+
+def oAuth(request):
+    """
+        Redirects to Channeli OAuth Authorization page
+    """
+
+    return redirect(urls['authorization_url'])
 
 
 def loginOauth(request):
