@@ -1,32 +1,65 @@
+from trello import permissions
 from django.http.response import HttpResponse
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from .models import AppUser, Project, List, Card
 from .serializers import UserSerializer, ProjectSerializer, ListSerializer, CardSerializer
 import requests
 from .data import urls, keys
+from trello import data
 # Create your views here.
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = AppUser.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.AdminPermission]
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
+    allow_method = ["GET", "POST", "DELETE", "HEAD"]
+
+    def get_permissions(self):
+        """
+            Setting permission according to various conditions
+        """
+        if self.request.method in self.allow_method:
+            self.permission_classes = [permissions.ProjectPermission]
+        elif self.request.method == "PUT":
+            if self.request.POST.get('team_members'):
+                self.permission_classes = [
+                    permissions.ProjectCreatorPermission]
+            else:
+                self.permission_classes = [permissions.ProjectPermission]
+        return super(ProjectViewSet, self).get_permissions()
+
 
 class ListViewSet(viewsets.ModelViewSet):
     queryset = List.objects.all()
     serializer_class = ListSerializer
+    permission_classes = [permissions.ListCardPermission]
+
+    # method = ["POST", 'PUT', "DELETE"]
+
+    # def get_permissions(self):
+    #     if self.request.method == "GET":
+    #         print("get")
+    #         self.permission_classes = [IsAuthenticated]
+    #     elif self.request.method == "POST":
+    #         print("post")
+    #         self.permission_classes = [permissions.ListClassPostPermission]
+    #     return super(ListViewSet, self).get_permissions()
 
 
 class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
+    permission_classes = [permissions.ListCardPermission]
 
 
 def oAuth(request):

@@ -17,7 +17,7 @@ class AppUser(AbstractUser):
 
 
 class Project(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     wiki = RichTextField()
     date_started = models.DateField(auto_now_add=True)
     team_members = models.ManyToManyField(AppUser, related_name='team_member')
@@ -28,7 +28,7 @@ class Project(models.Model):
 
 
 class List(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     project = models.ForeignKey(to=Project, on_delete=CASCADE)
 
     def __str__(self) -> str:
@@ -36,7 +36,7 @@ class List(models.Model):
 
 
 class Card(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=500)
     comment = models.CharField(max_length=500)
     assignee = models.ManyToManyField(AppUser, related_name='Assignees')
