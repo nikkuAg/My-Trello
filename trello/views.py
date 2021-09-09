@@ -44,17 +44,6 @@ class ListViewSet(viewsets.ModelViewSet):
     serializer_class = ListSerializer
     permission_classes = [permissions.ListCardPermission]
 
-    # method = ["POST", 'PUT', "DELETE"]
-
-    # def get_permissions(self):
-    #     if self.request.method == "GET":
-    #         print("get")
-    #         self.permission_classes = [IsAuthenticated]
-    #     elif self.request.method == "POST":
-    #         print("post")
-    #         self.permission_classes = [permissions.ListClassPostPermission]
-    #     return super(ListViewSet, self).get_permissions()
-
 
 class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()

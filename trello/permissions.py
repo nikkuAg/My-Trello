@@ -7,6 +7,7 @@ class AdminPermission(BasePermission):
         Admin can create user, update or delete user.
         User not having admin rights can only view all users.
     """
+
     message = "You do not have admin rights"
 
     def has_permission(self, request, view):
@@ -27,6 +28,7 @@ class ProjectPermission(BasePermission):
         Anyone can create project
         Team member, creator, admin can update, delete project
     """
+
     team_methods = ['GET', 'POST', 'HEAD', 'PUT', 'DELETE']
 
     message = "You are not a part of this project"
@@ -53,6 +55,7 @@ class ProjectCreatorPermission(BasePermission):
         Special Permission of Creator
         Only creator can add new team members
     """
+
     message = "Only Creator can add team_members"
 
     def has_object_permission(self, request, view, obj):
