@@ -3,6 +3,12 @@ from django.db.models.deletion import CASCADE
 from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
 
+# imports for Token Authentications
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+
 # Create your models here.
 
 
@@ -45,3 +51,9 @@ class Card(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

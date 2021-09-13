@@ -3,12 +3,13 @@ from django.http.response import HttpResponse
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
+from rest_framework.authtoken.models import Token
 from .models import AppUser, Project, List, Card
 from .serializers import UserSerializer, ProjectSerializer, ListSerializer, CardSerializer
 import requests
 from .data import urls, keys
-from trello import data
+
+
 # Create your views here.
 
 
@@ -55,7 +56,6 @@ def oAuth(request):
     """
         Redirects to Channeli OAuth Authorization page
     """
-
     return redirect(urls['authorization_url'])
 
 
@@ -98,8 +98,8 @@ def loginOauth(request):
     user = AppUser.objects.get(username=username)
     if user is not None:
         login(request, user)
-        return redirect("http://localhost:8000/trello/")
+        auth_token = Token.objects.get(user_id=user.id).key
+        return redirect(f"http://localhost:3000/?token={auth_token}")
     else:
         user.delete()
         return HttpResponse("Failed Login")
-    

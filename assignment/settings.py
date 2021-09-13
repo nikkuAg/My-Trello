@@ -42,7 +42,15 @@ INSTALLED_APPS = [
     'ckeditor',
     'trello',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
+
+# Rest Framework Defaults
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
