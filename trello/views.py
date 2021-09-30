@@ -99,7 +99,9 @@ def loginOauth(request):
     if user is not None:
         login(request, user)
         auth_token = Token.objects.get(user_id=user.id).key
-        return redirect(f"http://localhost:3000/?token={auth_token}")
+        admin = user.admin
+        disable = user.disabled
+        return redirect(f"http://localhost:3000/token/?token={auth_token}&admin={admin}&disable={disable}&id={str(user.id)}")
     else:
         user.delete()
         return HttpResponse("Failed Login")
