@@ -26,7 +26,8 @@ class Project(models.Model):
     name = models.CharField(max_length=255, unique=True)
     wiki = RichTextField()
     date_started = models.DateField(auto_now_add=True)
-    team_members = models.ManyToManyField(AppUser, related_name='team_member')
+    team_members = models.ManyToManyField(
+        AppUser, related_name='team_member')
     creator = models.ManyToManyField(AppUser, related_name='maintainer')
 
     def __str__(self) -> str:
@@ -44,10 +45,10 @@ class List(models.Model):
 class Card(models.Model):
     title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=500)
-    comment = models.CharField(max_length=500)
+    comment = models.CharField(max_length=500, null=True)
     assignee = models.ManyToManyField(AppUser, related_name='Assignees')
     list = models.ForeignKey(to=List, on_delete=CASCADE)
-    due_date = models.DateField()
+    due_date = models.DateField(null=True)
 
     def __str__(self) -> str:
         return self.title
