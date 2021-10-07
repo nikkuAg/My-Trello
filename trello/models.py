@@ -44,7 +44,7 @@ class List(models.Model):
 
 class Card(models.Model):
     title = models.CharField(max_length=255, unique=True)
-    description = models.CharField(max_length=500)
+    description = RichTextField()
     comment = models.CharField(max_length=500, null=True)
     assignee = models.ManyToManyField(AppUser, related_name='Assignees')
     list = models.ForeignKey(to=List, on_delete=CASCADE)
