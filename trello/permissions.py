@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
-from .models import Project
+from .models import List, Project
 
 
 class AdminPermission(BasePermission):
@@ -71,15 +71,15 @@ class ListCardPermission(BasePermission):
 
     message = "You are not a part of this project"
 
-    def has_permission(self, request, view):
-        if request.user.is_authenticated:
-            return True
+    # def has_permission(self, request, view):
+    #     if request.user.is_authenticated:
+    #         return True
 
     def has_object_permission(self, request, view, obj):
         user = request.user
         if user.is_authenticated:
-            project = obj.project
-            print(project)
+            list = obj.list
+            project = List.objects.get(name=list).project
             data = Project.objects.get(name=project)
             team_id = []
             creator_id = []
@@ -87,8 +87,5 @@ class ListCardPermission(BasePermission):
                 team_id.append(x.id)
             for x in data.creator.all():
                 creator_id.append(x.id)
-            print(team_id)
-            print(creator_id)
-            print(user.id)
             if (user.id in team_id) or (user.id in creator_id) or (user.admin == True):
                 return True
