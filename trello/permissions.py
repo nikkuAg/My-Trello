@@ -11,7 +11,7 @@ class AdminPermission(BasePermission):
     message = "You do not have admin rights"
 
     def has_permission(self, request, view):
-        admin_methods = ['GET', 'POST', 'HEAD']
+        admin_methods = ['GET', 'POST', 'HEAD', 'PUT', 'DELETE']
         if request.user.is_authenticated:
             if request.user.admin == True and (request.method in admin_methods):
                 return True
@@ -71,9 +71,9 @@ class ListCardPermission(BasePermission):
 
     message = "You are not a part of this project"
 
-    # def has_permission(self, request, view):
-    #     if request.user.is_authenticated:
-    #         return True
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return True
 
     def has_object_permission(self, request, view, obj):
         user = request.user
