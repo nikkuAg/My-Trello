@@ -4,8 +4,9 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
-from .models import AppUser, Project, List, Card
-from .serializers import UserSerializer, ProjectSerializer, ListSerializer, CardSerializer
+from rest_framework.permissions import IsAuthenticated
+from .models import AppUser, Project, List, Card, Comment
+from .serializers import UserSerializer, ProjectSerializer, ListSerializer, CardSerializer, CommentSerializer
 import requests
 from .data import urls, keys
 
@@ -50,6 +51,12 @@ class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
     permission_classes = [permissions.ListCardPermission]
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
 
 
 def oAuth(request):

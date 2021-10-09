@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
+from django.db.models.fields.related import ForeignKey
 from ckeditor.fields import RichTextField
 
 # imports for Token Authentications
@@ -52,6 +53,12 @@ class Card(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(to=AppUser, on_delete=CASCADE)
+    message = models.CharField(max_length=255)
+    card = models.ForeignKey(to=Card, on_delete=CASCADE)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
